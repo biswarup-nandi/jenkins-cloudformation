@@ -1,17 +1,24 @@
 // Filename: Jenkinsfile
 node {
-  def GITREPOREMOTE = "https://github.com/biswarup-nandi/jenkins-cloudformation.git"
-  def GITBRANCH     = "main"
-  def AWSCLIPATH     = "/usr/local/bin"
+    def GITREPOREMOTE = "https://github.com/biswarup-nandi/jenkins-cloudformation.git"
+    def GITBRANCH     = "main"
+    def AWSCLIPATH     = "/usr/bin"
 
-  stage('Checkout') {
-    git branch: GITBRANCH, url: GITREPOREMOTE
-  }
-  stage('Validation') {
-    sh """#!/bin/bash
-          ls
-          aws --version
-          whereis aws
-       """
-  }
+    parameters {
+        string(name: 'WS_BKT', defaultValue: 'databricks-development-ws-bkt', description: 'Enter Workspace Bucket Name')
+        string(name: 'WS_STRG_CONFG_IAM_ROLE', defaultValue: true, description: 'Enter IAM Role Name for Storage Config')
+        string(name: 'WS_CRED_CONFG_IAM_ROLE', defaultValue: true, description: 'Enter IAM Role Name for Credential Config')
+    }
+
+    stage('Checkout') {
+        git branch: GITBRANCH, url: GITREPOREMOTE
+    }
+
+    stage('Validation') {
+        sh """#!/bin/bash
+            ls
+            aws s3 ls
+            echo $WS_STRG_CONFG_IAM_ROLE
+        """
+    }
 }
