@@ -1,6 +1,6 @@
 // Filename: Jenkinsfile
 node {
-    agent all
+    agent any
 
     def GITREPOREMOTE = "https://github.com/biswarup-nandi/jenkins-cloudformation.git"
     def GITBRANCH     = "main"
