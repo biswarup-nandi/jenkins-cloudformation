@@ -5,10 +5,10 @@ node {
     def GITBRANCH     = "main"
     def AWSCLIPATH     = "/usr/bin"
 
-    // parameters {
-    //     string defaultValue: 'databricks-development-ws-bkt', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
-    //     string defaultValue: '', description: 'Databricks Account ID', name: 'dbx_acc_id'
-    // }
+    parameters {
+        string defaultValue: 'databricks-development-ws-bkt', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
+        string defaultValue: '', description: 'Databricks Account ID', name: 'dbx_acc_id'
+    }
 
     stage('Checkout') {
         git branch: GITBRANCH, url: GITREPOREMOTE
