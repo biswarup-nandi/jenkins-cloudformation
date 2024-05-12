@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion : 2010-09-09
+
+Description: Create Workspace Related S3 Bucket
+
+Parameters:
+  BucketNameParam:
+    Description: Unique Bucket Name
+    Type: String
+    Default: databricks-development-ws-bkt
+  DatabricksAccountIDParam:
+    Description: Databricks Account ID
+    Type: String
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketNameParam
+      Tags:
+        - {Key: Name, Value: 'Databricks Workspace Bucket'}
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Statement:
+          - {Effect: Allow, Action: ["s3:GetObject","s3:GetObjectVersion","s3:PutObject","s3:DeleteObject","s3:ListBucket","s3:GetBucketLocation"], Principal: {AWS: "arn:aws:iam::414351767826:root"}, Resource: [!Sub "${S3Bucket.Arn}/*",!Sub "${S3Bucket.Arn}"], Condition: {"StringEquals":{"aws:PrincipalTag/DatabricksAccountId": !Ref DatabricksAccountIDParam}}}
+          - {Effect: Deny, Action: "s3:*", Principal: {AWS: "arn:aws:iam::414351767826:root"}, Resource: !Sub "${S3Bucket.Arn}/unity-catalog/*"}
+Outputs:
+  S3Bucket:
+     Description: The S3 Bucket Arn
+     Value: !Sub '${S3Bucket.Arn}'
+     Export: {Name: !Sub '${AWS::StackName}-S3Bucket'}

@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Create Storage Config IAM Role
+
+Parameters:
+  IamRoleName:
+    Description: Storage Config IAM Role Name
+    Type: String
+    default: "workspace-strg-config-iam-role"
+  DatabricksAccountIDParam:
+    Description: Databricks Account ID
+    Type: String
+
+Resources:
+  IamRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName : !Ref IamRoleName
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - {Effect: "Allow", Principal: {AWS: ["arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL","arn:aws:iam::374726781955:role/databricks-development-ws-iam"]},Action: "sts:AssumeRole",Condition: {StringEquals: {"sts:ExternalId": !Ref DatabricksAccountIDParam}}}
+  
+  IAMPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: MyIAMPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - {"Action":["s3:GetObject","s3:PutObject","s3:DeleteObject","s3:ListBucket","s3:GetBucketLocation"],"Resource":["arn:aws:s3:::databricks-development-ws-bkt/*","arn:aws:s3:::databricks-development-ws-bkt"],"Effect":"Allow"}
+          - {"Action":["kms:Decrypt","kms:Encrypt","kms:GenerateDataKey*"],"Resource":["*"],"Effect":"Allow"}
+          - {"Action":["sts:AssumeRole"],"Resource":["arn:aws:iam::374726781955:role/databricks-development-ws-iam"],"Effect":"Allow"}
+      Roles:
+        - !Ref IamRole
+
+Outputs:
+  storageConfigIamRole:
+     Description: The IAM Role Arn
+     Value: !Sub '${IamRole.Arn}'
+     Export: {Name: !Sub '${AWS::StackName}-IamRole'}
