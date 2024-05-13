@@ -32,14 +32,21 @@ pipeline {
             steps {
                 script {
                     try {
+                        def stackName = "${params.bkt_nm}-cf-stack"
+                        def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
+
                         def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
                         def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
-                        command += " --stack-name ${params.bkt_nm}-cf-stack"
+                        command += " --stack-name $stackName"
                         command += " --parameter-overrides"
                         // Add parameter values
                         command += " BucketNameParam=${params.bkt_nm}"
                         command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+
+                        if (stackExists) {
+                            command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
+                        }
                         // Execute the command
                         sh(command)
                     } catch (Exception e) { 
