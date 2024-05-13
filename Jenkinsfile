@@ -53,7 +53,7 @@ pipeline {
                 script {
                     try {
                         def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
-                        def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
+                        def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
                         command += " --stack-name ${params.strg_role_nm}-cf-stack"
                         command += " --parameter-overrides"
@@ -74,7 +74,7 @@ pipeline {
                 script {
                     try {
                         def cloudFormationTemplate = 'workspace/workspace-cred-config-iam-role.yml'
-                        def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
+                        def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
                         command += " --stack-name ${params.cred_role_nm}-cf-stack"
                         command += " --parameter-overrides"
