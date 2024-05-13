@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     parameters {
+        string defaultValue: 'us-east-1', description: 'AWS Region', name: 'aws_region'
         string defaultValue: 'databricks-development-ws-bkt', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
         string defaultValue: '', description: 'Databricks Account ID', name: 'dbx_acc_id'
     }
@@ -34,7 +35,7 @@ pipeline {
                     // command += " BucketNameParam=${params.bkt_nm}"
                     // command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
                     // // Execute the command
-                    def command = "aws s3 ls --region us-east-1"
+                    def command = "aws s3 ls --region ${params.aws_region}"
                     sh(command)
                 }
             }
