@@ -6,7 +6,7 @@ Parameters:
   IamRoleName:
     Description: Storage Config IAM Role Name
     Type: String
-    default: "workspace-strg-config-iam-role"
+    default: workspace-strg-config-iam-role
   DatabricksAccountIDParam:
     Description: Databricks Account ID
     Type: String

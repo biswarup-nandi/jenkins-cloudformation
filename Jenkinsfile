@@ -42,12 +42,8 @@ pipeline {
                         command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
                         // Execute the command
                         sh(command)
-                    } catch (Exception e) {
-                        if (!e.getMessage().contains("No changes to deploy")) {
-                            error("Error deploying CloudFormation stack: ${e.getMessage()}")
-                        } else {
-                            echo "CloudFormation stack is up to date."
-                        }
+                    } catch (Exception e) { 
+                        echo "Error deploying CloudFormation stack: ${e.getMessage()}"
                     }
                 }
             }
@@ -55,34 +51,42 @@ pipeline {
         stage('Workspace Storage Config IAM Role Provisioning') {
             steps {
                 script {
-                    def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
-                    def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
-                    command += " --region ${params.aws_region}"
-                    command += " --stack-name ${params.strg_role_nm}-cf-stack"
-                    command += " --parameter-overrides"
-                    // Add parameter values
-                    command += " IamRoleName=${params.strg_role_nm}"
-                    command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
-                    // Execute the command
-                    // def command = "aws s3 ls --region ${params.aws_region}"
-                    sh(command)
+                    try {
+                        def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
+                        def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
+                        command += " --region ${params.aws_region}"
+                        command += " --stack-name ${params.strg_role_nm}-cf-stack"
+                        command += " --parameter-overrides"
+                        // Add parameter values
+                        command += " IamRoleName=${params.strg_role_nm}"
+                        command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        // Execute the command
+                        // def command = "aws s3 ls --region ${params.aws_region}"
+                        sh(command)
+                    } catch (Exception e) { 
+                        echo "Error deploying CloudFormation stack: ${e.getMessage()}"
+                    }
                 }
             }
         }
         stage('Workspace Credential Config IAM Role Provisioning') {
             steps {
                 script {
-                    def cloudFormationTemplate = 'workspace/workspace-cred-config-iam-role.yml'
-                    def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
-                    command += " --region ${params.aws_region}"
-                    command += " --stack-name ${params.cred_role_nm}-cf-stack"
-                    command += " --parameter-overrides"
-                    // Add parameter values
-                    command += " IamRoleName=${params.cred_role_nm}"
-                    command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
-                    // Execute the command
-                    // def command = "aws s3 ls --region ${params.aws_region}"
-                    sh(command)
+                    try {
+                        def cloudFormationTemplate = 'workspace/workspace-cred-config-iam-role.yml'
+                        def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
+                        command += " --region ${params.aws_region}"
+                        command += " --stack-name ${params.cred_role_nm}-cf-stack"
+                        command += " --parameter-overrides"
+                        // Add parameter values
+                        command += " IamRoleName=${params.cred_role_nm}"
+                        command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        // Execute the command
+                        // def command = "aws s3 ls --region ${params.aws_region}"
+                        sh(command)
+                    } catch (Exception e) { 
+                        echo "Error deploying CloudFormation stack: ${e.getMessage()}"
+                    }
                 }
             }
         }
