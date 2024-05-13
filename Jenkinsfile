@@ -10,13 +10,12 @@ pipeline {
                     
                     // Convert the output to an integer
                     def result = commandOutput.toInteger()
-                    
-                    echo "Result: $result"
-                    // if (result != 3) {
-                    //     error("Expected 3 .yml files in workspace, but found $result")
-                    // } else {
-                    //     echo "Validation successful. Moving to next stage."
-                    // }
+
+                    if (result != 3) {
+                        error("Expected 3 .yml files in workspace, but found $result")
+                    } else {
+                        echo "Validation successful. Moving to next stage."
+                    }
                 }
             }
         }
