@@ -1,26 +1,22 @@
 pipeline {
     agent any
 
-    def GITREPOREMOTE = "https://github.com/biswarup-nandi/jenkins-cloudformation.git"
-    def GITBRANCH     = "main"
-    def AWSCLIPATH     = "/usr/bin"
-
     stages {
-        stage('Build') {
+        stage('Validating Files') {
             steps {
-                echo 'Building..'
+                sh("ls -ltr")
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         echo 'Testing..'
+        //     }
+        // }
+        // stage('Deploy') {
+        //     steps {
+        //         echo 'Deploying....'
+        //     }
+        // }
     }
 }
 
