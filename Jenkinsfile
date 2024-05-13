@@ -31,6 +31,8 @@ pipeline {
         stage('Workspace S3 Bukcet Provisioning') {
             steps {
                 script {
+                    echo("Hello......")
+                    
                     def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
                     def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
                     command += " --region ${params.aws_region}"
