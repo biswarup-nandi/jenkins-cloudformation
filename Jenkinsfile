@@ -5,11 +5,11 @@ pipeline {
         stage('Validating Files') {
             steps {
                 script {
-                    def ymlFiles = sh(script: "ls -1 *.yml | wc -l", returnStdout: true).trim()
-                    if (ymlFiles.toInteger() < 3) {
-                        error "There are less than 3 .yml files present"
+                    def result = sh(script: 'ls workspace/*.yml | wc -l', returnStatus: true)
+                    if (result != 3) {
+                        error("Expected 3 .yml files in workspace, but found $result")
                     } else {
-                        echo "All required .yml files are present"
+                        echo "Validation successful. Moving to next stage."
                     }
                 }
             }
