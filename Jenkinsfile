@@ -3,8 +3,9 @@ pipeline {
 
     parameters {
         string defaultValue: 'us-east-1', description: 'AWS Region', name: 'aws_region'
-        string defaultValue: 'databricks-development-ws-bkt', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
         string defaultValue: '', description: 'Databricks Account ID', name: 'dbx_acc_id'
+
+        string defaultValue: 'databricks-development-ws-bkt', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
     }
 
     stages {
