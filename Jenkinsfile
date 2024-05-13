@@ -1,8 +1,13 @@
 pipeline {
     agent any
 
+    parameters {
+        string defaultValue: 'databricks-development-ws-bkt', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
+        string defaultValue: '', description: 'Databricks Account ID', name: 'dbx_acc_id'
+    }
+
     stages {
-        stage('Validating Files') {
+        stage('CloudFormation Template Validation') {
             steps {
                 script {
                     // Capture the output of the shell command
@@ -19,16 +24,21 @@ pipeline {
                 }
             }
         }
-        // stage('Test') {
-        //     steps {
-        //         echo 'Testing..'
-        //     }
-        // }
-        // stage('Deploy') {
-        //     steps {
-        //         echo 'Deploying....'
-        //     }
-        // }
+        stage('Worspace Bukcet Provisioning') {
+            steps {
+                script {
+                    // def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
+                    // def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate} --region us-east-1"
+                    // command += " --parameter-overrides"
+                    // // Add parameter values
+                    // command += " BucketNameParam=${params.bkt_nm}"
+                    // command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                    // // Execute the command
+                    def command = "echo ${params.bkt_nm}"
+                    sh(command)
+                }
+            }
+        }
     }
 }
 
