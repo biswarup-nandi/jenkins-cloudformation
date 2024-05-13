@@ -28,14 +28,14 @@ pipeline {
         stage('Worspace Bukcet Provisioning') {
             steps {
                 script {
-                    // def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
-                    // def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate} --region us-east-1"
-                    // command += " --parameter-overrides"
-                    // // Add parameter values
-                    // command += " BucketNameParam=${params.bkt_nm}"
-                    // command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
-                    // // Execute the command
-                    def command = "aws s3 ls --region ${params.aws_region}"
+                    def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
+                    def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate} --region us-east-1"
+                    command += " --parameter-overrides"
+                    // Add parameter values
+                    command += " BucketNameParam=${params.bkt_nm}"
+                    command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                    // Execute the command
+                    // def command = "aws s3 ls --region ${params.aws_region}"
                     sh(command)
                 }
             }
