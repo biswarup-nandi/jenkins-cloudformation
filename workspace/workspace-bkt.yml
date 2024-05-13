@@ -6,7 +6,6 @@ Parameters:
   BucketNameParam:
     Description: Unique Bucket Name
     Type: String
-    Default: databricks-development-ws-bkt
   DatabricksAccountIDParam:
     Description: Databricks Account ID
     Type: String
