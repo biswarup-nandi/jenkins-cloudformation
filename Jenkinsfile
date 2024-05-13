@@ -5,7 +5,12 @@ pipeline {
         stage('Validating Files') {
             steps {
                 script {
-                    def result = sh(script: 'ls workspace/*.yml | wc -l', returnStatus: true)
+                    // Capture the output of the shell command
+                    def commandOutput = sh(script: 'ls workspace/*.yml | wc -l', returnStdout: true).trim()
+                    
+                    // Convert the output to an integer
+                    def result = commandOutput.toInteger()
+                    
                     echo "Result: $result"
                     // if (result != 3) {
                     //     error("Expected 3 .yml files in workspace, but found $result")
