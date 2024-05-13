@@ -3,9 +3,9 @@ pipeline {
 
     parameters {
         string defaultValue: 'us-east-1', description: 'AWS Region', name: 'aws_region'
-        string defaultValue: '', description: 'Databricks Account ID', name: 'dbx_acc_id'
+        string defaultValue: '01352882-003b-4f43-bb86-f8f7700069ce', description: 'Databricks Account ID', name: 'dbx_acc_id'
 
-        string defaultValue: 'databricks-development-ws-bkt', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
+        string defaultValue: 'databricks-development-ws-bkt-2024', description: 'Databricks Workspace Bucket Name', name: 'bkt_nm'
         string defaultValue: 'databricks-development-strg-config-iam-role', description: 'Databricks storage config iam role Name', name: 'strg_role_nm'
         string defaultValue: 'databricks-development-cred-config-iam-role', description: 'Databricks cred config iam role Name', name: 'cred_role_nm'
     }
