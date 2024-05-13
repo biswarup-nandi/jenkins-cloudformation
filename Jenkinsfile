@@ -4,9 +4,12 @@ pipeline {
     stages {
         stage('Validating Files') {
             steps {
-                sh("ls -ltr")
-                sh("cd workspace")
-                sh("ls -ltr")
+                sh """
+                    #!/bin/bash
+                    ls -ltr
+                    cd workspace
+                    ls -ltr
+                """
             }
         }
         // stage('Test') {
