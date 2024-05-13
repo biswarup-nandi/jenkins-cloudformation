@@ -29,7 +29,8 @@ pipeline {
             steps {
                 script {
                     def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
-                    def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate} --region us-east-1"
+                    def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
+                    command += " --region ${params.aws_region}"
                     command += " --stack-name ${params.bkt_nm}-cf-stack"
                     command += " --parameter-overrides"
                     // Add parameter values
