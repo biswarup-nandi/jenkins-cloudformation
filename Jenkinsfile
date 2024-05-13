@@ -28,7 +28,7 @@ pipeline {
                 }
             }
         }
-        stage('Workspace Bukcet Provisioning') {
+        stage('Workspace S3 Bukcet Provisioning') {
             steps {
                 script {
                     def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
@@ -45,7 +45,7 @@ pipeline {
                 }
             }
         }
-        stage('Worspace storage config iam Provisioning') {
+        stage('Workspace Storage Config IAM Role Provisioning') {
             steps {
                 script {
                     def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
@@ -62,7 +62,7 @@ pipeline {
                 }
             }
         }
-        stage('Worspace cred config iam Provisioning') {
+        stage('Workspace Credential Config IAM Role Provisioning') {
             steps {
                 script {
                     def cloudFormationTemplate = 'workspace/workspace-cred-config-iam-role.yml'
