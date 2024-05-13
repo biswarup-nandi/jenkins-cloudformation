@@ -4,12 +4,14 @@ pipeline {
     stages {
         stage('Validating Files') {
             steps {
-                sh """
-                    #!/bin/bash
-                    ls -ltr
-                    cd workspace
-                    ls -ltr
-                """
+                script {
+                    def ymlFiles = sh(script: "ls -1 *.yml | wc -l", returnStdout: true).trim()
+                    if (ymlFiles.toInteger() < 3) {
+                        error "There are less than 3 .yml files present"
+                    } else {
+                        echo "All required .yml files are present"
+                    }
+                }
             }
         }
         // stage('Test') {
