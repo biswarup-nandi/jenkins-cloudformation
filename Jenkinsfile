@@ -5,6 +5,8 @@ pipeline {
         stage('Validating Files') {
             steps {
                 sh("ls -ltr")
+                sh("cd workspace")
+                sh("ls -ltr")
             }
         }
         // stage('Test') {
