@@ -45,6 +45,8 @@ pipeline {
 
                     def output = sh(script: command, returnStdout: true).trim()
 
+                    echo("Output: ${output}")
+
                     if (output.contains("No changes to deploy")) {
                         echo "CloudFormation stack is up to date."
                     }
