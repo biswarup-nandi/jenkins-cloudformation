@@ -47,6 +47,7 @@ pipeline {
                         if (stackExists) {
                             command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
                         }
+
                         // Execute the command
                         sh(command)
                     } catch (Exception e) { 
@@ -59,6 +60,9 @@ pipeline {
             steps {
                 script {
                     try {
+                        def stackName = "${params.strg_role_nm}-cf-stack"
+                        def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
+
                         def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
                         def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
@@ -67,8 +71,12 @@ pipeline {
                         // Add parameter values
                         command += " IamRoleName=${params.strg_role_nm}"
                         command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        
+                        if (stackExists) {
+                            command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
+                        }
+
                         // Execute the command
-                        // def command = "aws s3 ls --region ${params.aws_region}"
                         sh(command)
                     } catch (Exception e) { 
                         echo "Error deploying CloudFormation stack: ${e.getMessage()}"
@@ -80,6 +88,9 @@ pipeline {
             steps {
                 script {
                     try {
+                        def stackName = "${params.cred_role_nm}-cf-stack"
+                        def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
+
                         def cloudFormationTemplate = 'workspace/workspace-cred-config-iam-role.yml'
                         def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
@@ -88,8 +99,12 @@ pipeline {
                         // Add parameter values
                         command += " IamRoleName=${params.cred_role_nm}"
                         command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+
+                        if (stackExists) {
+                            command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
+                        }
+                        
                         // Execute the command
-                        // def command = "aws s3 ls --region ${params.aws_region}"
                         sh(command)
                     } catch (Exception e) { 
                         echo "Error deploying CloudFormation stack: ${e.getMessage()}"
