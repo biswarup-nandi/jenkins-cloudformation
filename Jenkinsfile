@@ -31,26 +31,23 @@ pipeline {
         stage('Workspace S3 Bukcet Provisioning') {
             steps {
                 script {
-                    echo("Hello......")
-                    
-                    def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
-                    def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
-                    command += " --region ${params.aws_region}"
-                    command += " --stack-name ${params.bkt_nm}-cf-stack"
-                    command += " --parameter-overrides"
-                    // Add parameter values
-                    command += " BucketNameParam=${params.bkt_nm}"
-                    command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
-                    // Execute the command
-                    // def command = "aws s3 ls --region ${params.aws_region}"
-                    // sh(command)
-
-                    def output = sh(script: command, returnStdout: true).trim()
-
-                    echo("Output: ${output}")
-
-                    if (output.contains("No changes to deploy")) {
-                        echo "CloudFormation stack is up to date."
+                    try {
+                        def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
+                        def command = "aws cloudformation deploy --template-file ${cloudFormationTemplate}"
+                        command += " --region ${params.aws_region}"
+                        command += " --stack-name ${params.bkt_nm}-cf-stack"
+                        command += " --parameter-overrides"
+                        // Add parameter values
+                        command += " BucketNameParam=${params.bkt_nm}"
+                        command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        // Execute the command
+                        sh(command)
+                    } catch (Exception e) {
+                        if (!e.getMessage().contains("No changes to deploy")) {
+                            error("Error deploying CloudFormation stack: ${e.getMessage()}")
+                        } else {
+                            echo "CloudFormation stack is up to date."
+                        }
                     }
                 }
             }
