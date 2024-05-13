@@ -41,7 +41,13 @@ pipeline {
                     command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
                     // Execute the command
                     // def command = "aws s3 ls --region ${params.aws_region}"
-                    sh(command)
+                    // sh(command)
+
+                    def output = sh(script: command, returnStdout: true).trim()
+
+                    if (output.contains("No changes to deploy")) {
+                        echo "CloudFormation stack is up to date."
+                    }
                 }
             }
         }
