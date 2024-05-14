@@ -23,7 +23,7 @@ Resources:
   IAMPolicy:
     Type: "AWS::IAM::Policy"
     Properties:
-      PolicyName: MyIAMPolicy
+      PolicyName: !Sub "${IamRoleName}-policy-1"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:

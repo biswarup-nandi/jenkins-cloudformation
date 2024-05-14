@@ -9,6 +9,9 @@ Parameters:
   DatabricksAccountIDParam:
     Description: Databricks Account ID
     Type: String
+  BucketNameParam:
+    Description: Ref Bucket Name
+    Type: String
 
 Resources:
   IamRole:
@@ -18,18 +21,18 @@ Resources:
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - {Effect: "Allow", Principal: {AWS: ["arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL","arn:aws:iam::374726781955:role/databricks-development-ws-iam"]},Action: "sts:AssumeRole",Condition: {StringEquals: {"sts:ExternalId": !Ref DatabricksAccountIDParam}}}
+          - {Effect: "Allow", Principal: {AWS: ["arn:aws:iam::414351767826:role/unity-catalog-prod-UCMasterRole-14S5ZJVKOTYTL", !Sub "arn:aws:iam::${AWS::AccountId}:role/${IamRoleName}"]},Action: "sts:AssumeRole",Condition: {StringEquals: {"sts:ExternalId": !Ref DatabricksAccountIDParam}}}
   
   IAMPolicy:
     Type: "AWS::IAM::Policy"
-    Properties:
-      PolicyName: MyIAMPolicy
+    Properties: 
+      PolicyName: !Sub "${IamRoleName}-policy-1"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - {"Action":["s3:GetObject","s3:PutObject","s3:DeleteObject","s3:ListBucket","s3:GetBucketLocation"],"Resource":["arn:aws:s3:::databricks-development-ws-bkt/*","arn:aws:s3:::databricks-development-ws-bkt"],"Effect":"Allow"}
+          - {"Action":["s3:GetObject","s3:PutObject","s3:DeleteObject","s3:ListBucket","s3:GetBucketLocation"],"Resource":[ !Sub "arn:aws:s3:::${BucketNameParam}-${AWS::AccountId}'/*",!Sub "arn:aws:s3:::${BucketNameParam}-${AWS::AccountId}"],"Effect":"Allow"}
           - {"Action":["kms:Decrypt","kms:Encrypt","kms:GenerateDataKey*"],"Resource":["*"],"Effect":"Allow"}
-          - {"Action":["sts:AssumeRole"],"Resource":["arn:aws:iam::374726781955:role/databricks-development-ws-iam"],"Effect":"Allow"}
+          - {"Action":["sts:AssumeRole"],"Resource":[!Ref IamRole.Arn],"Effect":"Allow"}
       Roles:
         - !Ref IamRole
 
