@@ -25,14 +25,14 @@ Resources:
   
   IAMPolicy:
     Type: "AWS::IAM::Policy"
-    Properties: 
+    Properties:
       PolicyName: !Sub "${IamRoleName}-policy-1"
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - {"Action":["s3:GetObject","s3:PutObject","s3:DeleteObject","s3:ListBucket","s3:GetBucketLocation"],"Resource":[ !Sub "arn:aws:s3:::${BucketNameParam}-${AWS::AccountId}'/*",!Sub "arn:aws:s3:::${BucketNameParam}-${AWS::AccountId}"],"Effect":"Allow"}
           - {"Action":["kms:Decrypt","kms:Encrypt","kms:GenerateDataKey*"],"Resource":["*"],"Effect":"Allow"}
-          - {"Action":["sts:AssumeRole"],"Resource":[!Ref IamRole],"Effect":"Allow"}
+          - {"Action":["sts:AssumeRole"],"Resource":[!Sub "arn:aws:iam::${AWS::AccountId}:role/${IamRoleName}"],"Effect":"Allow"}
       Roles:
         - !Ref IamRole
 
