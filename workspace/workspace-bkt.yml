@@ -14,14 +14,14 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Ref BucketNameParam
+      BucketName: !Sub '${S3Bucket}-${AWS::AccountId}'
       Tags:
         - {Key: Name, Value: 'Databricks Workspace Bucket'}
 
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Sub '${S3Bucket}-${AWS::AccountId}'
+      Bucket: !Ref S3Bucket
       PolicyDocument:
         Statement:
           - {Effect: Allow, Action: ["s3:GetObject","s3:GetObjectVersion","s3:PutObject","s3:DeleteObject","s3:ListBucket","s3:GetBucketLocation"], Principal: {AWS: "arn:aws:iam::414351767826:root"}, Resource: [!Sub "${S3Bucket.Arn}/*",!Sub "${S3Bucket.Arn}"], Condition: {"StringEquals":{"aws:PrincipalTag/DatabricksAccountId": !Ref DatabricksAccountIDParam}}}

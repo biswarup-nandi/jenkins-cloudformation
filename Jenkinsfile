@@ -61,7 +61,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        def stackName = "${params.bkt_nm}-cf-stack"
+                        def stackName = "${params.ext_bkt_nm}-cf-stack"
                         def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
 
                         def cloudFormationTemplate = 'workspace/workspace-bkt.yml'
@@ -95,11 +95,12 @@ pipeline {
                         def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
                         def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
-                        command += " --stack-name ${params.strg_role_nm}-cf-stack"
+                        command += " --stack-name $stackName"
                         command += " --parameter-overrides"
                         // Add parameter values
                         command += " IamRoleName=${params.strg_role_nm}"
                         command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        command += " BucketNameParam=${params.bkt_nm}"
                         
                         if (stackExists) {
                             command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
@@ -117,17 +118,18 @@ pipeline {
             steps {
                 script {
                     try {
-                        def stackName = "${params.strg_role_nm}-cf-stack"
+                        def stackName = "${params.ext_strg_role_nm}-cf-stack"
                         def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
 
                         def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
                         def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
-                        command += " --stack-name ${params.ext_strg_role_nm}-cf-stack"
+                        command += " --stack-name $stackName"
                         command += " --parameter-overrides"
                         // Add parameter values
                         command += " IamRoleName=${params.ext_strg_role_nm}"
                         command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        command += " BucketNameParam=${params.ext_bkt_nm}"
                         
                         if (stackExists) {
                             command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
@@ -151,7 +153,7 @@ pipeline {
                         def cloudFormationTemplate = 'workspace/workspace-cred-config-iam-role.yml'
                         def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
-                        command += " --stack-name ${params.cred_role_nm}-cf-stack"
+                        command += " --stack-name $stackName"
                         command += " --parameter-overrides"
                         // Add parameter values
                         command += " IamRoleName=${params.cred_role_nm}"
