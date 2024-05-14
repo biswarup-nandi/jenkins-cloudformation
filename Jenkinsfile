@@ -21,8 +21,8 @@ pipeline {
                     // Convert the output to an integer
                     def result = commandOutput.toInteger()
 
-                    if (result != 3) {
-                        error("Expected 3 .yml files in workspace, but found $result")
+                    if (result != 4) {
+                        error("Expected 4 .yml files in workspace, but found $result")
                     } else {
                         echo "Validation successful. Moving to next stage."
                     }
@@ -85,14 +85,14 @@ pipeline {
                 }
             }
         }
-        stage('Workspace Storage Config IAM Role Provisioning') {
+        stage('Workspace Storage Config IAM Role Creation') {
             steps {
                 script {
                     try {
                         def stackName = "${params.strg_role_nm}-cf-stack"
                         def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
 
-                        def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
+                        def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role-create.yml'
                         def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
                         command += " --stack-name $stackName"
@@ -114,14 +114,72 @@ pipeline {
                 }
             }
         }
-        stage('Workspace External Storage Config IAM Role Provisioning') {
+        stage('Workspace Storage Config IAM Role Modification') {
+            steps {
+                script {
+                    try {
+                        def stackName = "${params.strg_role_nm}-cf-stack"
+                        def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
+
+                        def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role-update.yml'
+                        def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
+                        command += " --region ${params.aws_region}"
+                        command += " --stack-name $stackName"
+                        command += " --parameter-overrides"
+                        // Add parameter values
+                        command += " IamRoleName=${params.strg_role_nm}"
+                        command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        command += " BucketNameParam=${params.bkt_nm}"
+                        
+                        if (stackExists) {
+                            command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
+                        }
+
+                        // Execute the command
+                        sh(command)
+                    } catch (Exception e) { 
+                        echo "Error deploying CloudFormation stack: ${e.getMessage()}"
+                    }
+                }
+            }
+        }
+        stage('Workspace External Storage Config IAM Role Creation') {
             steps {
                 script {
                     try {
                         def stackName = "${params.ext_strg_role_nm}-cf-stack"
                         def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
 
-                        def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role.yml'
+                        def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role-create.yml'
+                        def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
+                        command += " --region ${params.aws_region}"
+                        command += " --stack-name $stackName"
+                        command += " --parameter-overrides"
+                        // Add parameter values
+                        command += " IamRoleName=${params.ext_strg_role_nm}"
+                        command += " DatabricksAccountIDParam=${params.dbx_acc_id}"
+                        command += " BucketNameParam=${params.ext_bkt_nm}"
+                        
+                        if (stackExists) {
+                            command += " --no-fail-on-empty-changeset" // Update stack without failing if no changes
+                        }
+
+                        // Execute the command
+                        sh(command)
+                    } catch (Exception e) { 
+                        echo "Error deploying CloudFormation stack: ${e.getMessage()}"
+                    }
+                }
+            }
+        }
+        stage('Workspace External Storage Config IAM Role Modification') {
+            steps {
+                script {
+                    try {
+                        def stackName = "${params.ext_strg_role_nm}-cf-stack"
+                        def stackExists = sh(script: "aws cloudformation describe-stacks --region ${params.aws_region} --stack-name $stackName", returnStatus: true) == 0
+
+                        def cloudFormationTemplate = 'workspace/workspace-strg-config-iam-role-update.yml'
                         def command = "aws cloudformation deploy --capabilities CAPABILITY_NAMED_IAM --template-file ${cloudFormationTemplate}"
                         command += " --region ${params.aws_region}"
                         command += " --stack-name $stackName"
